@@ -1,8 +1,10 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import expressSession from "express-session";
 import { envVars } from "./app/config/env";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { router } from "./app/routes";
+import httpStatus from "http-status-codes";
 const app = express();
 
 app.use(
@@ -24,3 +26,14 @@ app.use(
     credentials: true,
   })
 );
+
+app.use("/api/v1", router);
+
+app.get("/", (req: Request, res: Response) => {
+  res.status(httpStatus.OK).json({
+    message: "Welcome to Parcel Delevery Management System Backend",
+  });
+});
+
+
+export default app;
