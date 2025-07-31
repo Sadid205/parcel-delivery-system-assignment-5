@@ -8,6 +8,9 @@ interface EnvConfig {
   NODE_ENV: "development" | "production";
   EXPRESS_SESSION_SECRET: string;
   FRONTEND_URL: string;
+  JWT: {
+    JWT_ACCESS_SECRET: string;
+  };
 }
 
 const loadEnvVariables = (): EnvConfig => {
@@ -17,6 +20,7 @@ const loadEnvVariables = (): EnvConfig => {
     "NODE_ENV",
     "EXPRESS_SESSION_SECRET",
     "FRONTEND_URL",
+    "JWT_ACCESS_SECRET",
   ];
 
   requiredEnvVariables.forEach((key) => {
@@ -30,6 +34,9 @@ const loadEnvVariables = (): EnvConfig => {
     NODE_ENV: process.env.NODE_ENV as "development" | "production",
     EXPRESS_SESSION_SECRET: process.env.EXPRESS_SESSION_SECRET as string,
     FRONTEND_URL: process.env.FRONTEND_URL as string,
+    JWT: {
+      JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET as string,
+    },
   };
 };
 
