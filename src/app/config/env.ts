@@ -11,6 +11,20 @@ interface EnvConfig {
   JWT: {
     JWT_ACCESS_SECRET: string;
   };
+  SUPER_ADMIN: {
+    SUPER_ADMIN_EMAIL: string;
+    SUPER_ADMIN_PASSWORD: string;
+  };
+  BCRYPT: {
+    BCRYPT_SALT_ROUND: string;
+  };
+  SMTP: {
+    SMTP_HOST: string;
+    SMTP_PORT: string;
+    SMTP_USER: string;
+    SMTP_PASS: string;
+    SMTP_FROM: string;
+  };
 }
 
 const loadEnvVariables = (): EnvConfig => {
@@ -21,6 +35,14 @@ const loadEnvVariables = (): EnvConfig => {
     "EXPRESS_SESSION_SECRET",
     "FRONTEND_URL",
     "JWT_ACCESS_SECRET",
+    "SUPER_ADMIN_EMAIL",
+    "SUPER_ADMIN_PASSWORD",
+    "BCRYPT_SALT_ROUND",
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_USER",
+    "SMTP_PASS",
+    "SMTP_PASS",
   ];
 
   requiredEnvVariables.forEach((key) => {
@@ -36,6 +58,20 @@ const loadEnvVariables = (): EnvConfig => {
     FRONTEND_URL: process.env.FRONTEND_URL as string,
     JWT: {
       JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET as string,
+    },
+    SUPER_ADMIN: {
+      SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL as string,
+      SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
+    },
+    BCRYPT: {
+      BCRYPT_SALT_ROUND: process.env.BCRYPT_SALT_ROUND as string,
+    },
+    SMTP: {
+      SMTP_HOST: process.env.SMTP_HOST as string,
+      SMTP_PORT: process.env.SMTP_PORT as string,
+      SMTP_USER: process.env.SMTP_USER as string,
+      SMTP_PASS: process.env.SMTP_PASS as string,
+      SMTP_FROM: process.env.SMTP_FROM as string,
     },
   };
 };
