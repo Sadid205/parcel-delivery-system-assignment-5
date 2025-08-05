@@ -5,8 +5,10 @@ import { verifyToken } from "../utils/jwt";
 import { envVars } from "../config/env";
 import { IsActive } from "../modules/user/user.interface";
 import { JwtPayload } from "jsonwebtoken";
+import { User } from "../modules/user/user.model";
 
-export const checkAuth = (...authRoles: string[]) => {
+export const checkAuth =
+  (...authRoles: string[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const accessToken = req.headers.authorization;
@@ -25,7 +27,7 @@ export const checkAuth = (...authRoles: string[]) => {
       }
       if (
         isUserExist.isActive === IsActive.BLOCKED ||
-        isUserExist.isActive === IsActive.BLOCKED
+        isUserExist.isActive === IsActive.INACTIVE
       ) {
         throw new AppError(
           httpStatus.BAD_REQUEST,
@@ -49,4 +51,3 @@ export const checkAuth = (...authRoles: string[]) => {
       next(error);
     }
   };
-};

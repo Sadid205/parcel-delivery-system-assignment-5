@@ -10,7 +10,7 @@ export enum Role {
   SUPER_ADMIN = "SUPER_ADMIN",
   ADMIN = "ADMIN",
   USER = "USER",
-  GUIDE = "GUIDE",
+  DELIVERY_MAN = "DELIVERY_MAN",
 }
 
 export interface IAuthProvider {
@@ -24,7 +24,6 @@ export interface IUser {
   email: string;
   password?: string;
   phone?: string;
-  picture?: string;
   address?: string;
   isDeleted?: boolean;
   isActive?: IsActive;
