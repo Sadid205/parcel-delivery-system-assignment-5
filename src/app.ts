@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { router } from "./app/routes";
 import httpStatus from "http-status-codes";
+import passport from "passport";
 const app = express();
 
 app.use(
@@ -14,8 +15,8 @@ app.use(
     saveUninitialized: false,
   })
 );
-// app.use(pasport.initialize())
-// app.use(pasport.session())
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(cookieParser());
 app.use(express.json());
 app.set("trust proxy", 1);
@@ -34,6 +35,5 @@ app.get("/", (req: Request, res: Response) => {
     message: "Welcome to Parcel Delevery Management System Backend",
   });
 });
-
 
 export default app;
