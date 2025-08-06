@@ -6,6 +6,7 @@ import cors from "cors";
 import { router } from "./app/routes";
 import httpStatus from "http-status-codes";
 import passport from "passport";
+import { globalErrorhandler } from "./app/middlewares/globalErrorHandlers";
 const app = express();
 
 app.use(
@@ -35,5 +36,7 @@ app.get("/", (req: Request, res: Response) => {
     message: "Welcome to Parcel Delevery Management System Backend",
   });
 });
+
+app.use(globalErrorhandler);
 
 export default app;
