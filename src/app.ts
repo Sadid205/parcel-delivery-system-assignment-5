@@ -6,6 +6,7 @@ import cors from "cors";
 import { router } from "./app/routes";
 import httpStatus from "http-status-codes";
 import passport from "passport";
+import "./app/config/passport.config";
 import { globalErrorhandler } from "./app/middlewares/globalErrorHandlers";
 const app = express();
 
