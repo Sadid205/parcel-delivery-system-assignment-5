@@ -1,6 +1,11 @@
+import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 
-const createParcel = catchAsync(async () => {});
+const createParcel = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    
+  }
+);
 const getAllParcel = catchAsync(async () => {});
 const getParcelHistory = catchAsync(async () => {});
 const cancelParcel = catchAsync(async () => {});

@@ -2,12 +2,15 @@ import { Router } from "express";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.interface";
 import { ParcelController } from "./parcel.controller";
+import { validatedRequest } from "../../middlewares/validatedRequest";
+import { createParcelZodSchema } from "./parcel.validation";
 
 const router = Router();
 
 router.post(
   "/",
   checkAuth(...Object.values(Role)),
+  validatedRequest(createParcelZodSchema),
   ParcelController.createParcel
 );
 router.get(
