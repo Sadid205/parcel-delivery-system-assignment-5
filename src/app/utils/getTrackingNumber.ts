@@ -1,4 +1,4 @@
-export const getTransactionId = () => {
+export const getTrackingNumber = () => {
   return `TRK-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 };
 

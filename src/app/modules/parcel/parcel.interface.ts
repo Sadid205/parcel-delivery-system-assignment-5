@@ -29,20 +29,27 @@ export enum IParcelType {
 
 export interface IParcelStatus {
   status: Status;
-  location: string;
-  timeStamp: Date;
+  location?: string;
   paid_status: IPaidStatus;
+}
+
+export interface IReceiver {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
 }
 
 export interface IParcel {
   sender: Types.ObjectId;
-  receiver: string;
+  receiver: IReceiver;
   tracking_number: string;
   weight: number;
   fees: number;
   delivery_date: Date;
   current_status: Types.ObjectId;
   trackingEvents: IParcelStatus[];
-  location: string;
   parcel_type: IParcelType;
+  description?: string;
+  createdAt: Date;
 }

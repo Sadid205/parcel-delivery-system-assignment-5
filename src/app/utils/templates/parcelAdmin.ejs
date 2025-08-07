@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>New Parcel Request</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        padding: 20px;
+        color: #333;
+      }
+      .container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        max-width: 600px;
+        margin: auto;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        font-size: 20px;
+        margin-bottom: 20px;
+        color: #222;
+      }
+      .info {
+        line-height: 1.6;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">Hello <%= adminName %>, 👋</div>
+
+      <div class="info">
+        A new parcel request has been submitted by
+        <strong><%= senderName %></strong>.<br /><br />
+
+        <strong>Sender Info:</strong><br />
+        📧 Email: <%= senderEmail %><br />
+        💰 Paid Status: <%= paidStatus %><br />
+
+        <strong>Receiver Info:</strong><br />
+        📧 Email: <%= receiverEmail %><br />
+        📞 Phone: <%= receiverPhone %><br />
+        📍 Address: <%= receiverAddress %><br /><br />
+
+        <strong>Parcel Details:</strong><br />
+        🆔 Tracking ID: <%= trackingId %><br />
+        📦 Type: <%= parcelType %><br />
+        ⚖️ Weight: <%= weight %>g<br />
+        💸 Price: ৳<%= price %><br />
+        📝 Description: <%= description %><br />
+        📅 Created At: <%= createdAt %><br />
+        🚦 Current Status: <%= currentStatus %><br />
+      </div>
+
+      <div class="footer">
+        Please review and take necessary action.<br /><br />
+        Best regards,<br />
+        Parcel Delivery System
+      </div>
+    </div>
+  </body>
+</html>

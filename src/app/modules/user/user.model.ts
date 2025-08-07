@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { IAuthProvider, IsActive, IUser, Role } from "./user.interface";
+import { parcelSchema } from "../parcel/parcel.model";
 
 const authProviderSchema = new Schema<IAuthProvider>(
   {
@@ -29,6 +30,7 @@ const userSchema = new Schema<IUser>(
     },
     isVerified: { type: Boolean, default: false },
     auths: [authProviderSchema],
+    assignedParcels: [{ type: Schema.ObjectId, ref: "Parcel" }],
   },
   { timestamps: true, versionKey: false }
 );

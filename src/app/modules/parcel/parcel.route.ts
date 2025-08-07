@@ -3,7 +3,13 @@ import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.interface";
 import { ParcelController } from "./parcel.controller";
 import { validatedRequest } from "../../middlewares/validatedRequest";
-import { createParcelZodSchema } from "./parcel.validation";
+import {
+  assignParcelSchema,
+  createParcelZodSchema,
+  sendOtpSchema,
+  updateParcelStatusSchema,
+  verifyOtpSchema,
+} from "./parcel.validation";
 
 const router = Router();
 
@@ -24,23 +30,42 @@ router.get(
   ParcelController.getParcelHistory
 );
 router.patch(
-  "/cancel/:id",
+  "/cancel/:tracking_number",
   checkAuth(...Object.values(Role)),
   ParcelController.cancelParcel
 );
 router.patch(
-  "/update-status/:id",
+  "/update-status/:tracking_number",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  validatedRequest(updateParcelStatusSchema),
   ParcelController.updateParcelStatus
+);
+router.patch(
+  "/:tracking_number",
+  checkAuth(...Object.values(Role)),
+  ParcelController.updateParcel
+);
+router.post(
+  "/assign",
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  validatedRequest(assignParcelSchema),
+  ParcelController.assignParcel
+);
+router.get(
+  "/assigned-parcel",
+  checkAuth(Role.DELIVERY_MAN),
+  ParcelController.getAssignedParcel
 );
 router.post(
   "/send-otp",
   checkAuth(Role.DELIVERY_MAN),
+  validatedRequest(sendOtpSchema),
   ParcelController.sendOtp
 );
 router.post(
   "/verify-otp",
   checkAuth(Role.DELIVERY_MAN),
+  validatedRequest(verifyOtpSchema),
   ParcelController.verifyOtp
 );
 

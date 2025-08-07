@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { IParcel } from "../parcel/parcel.interface";
 
 export enum IsActive {
   ACTIVE = "ACTIVE",
@@ -31,4 +32,5 @@ export interface IUser {
   role: Role;
   auths: IAuthProvider[];
   createdAt?: Date;
+  assignedParcels?: Types.ObjectId[];
 }
