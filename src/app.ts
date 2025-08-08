@@ -8,6 +8,7 @@ import httpStatus from "http-status-codes";
 import passport from "passport";
 import "./app/config/passport.config";
 import { globalErrorhandler } from "./app/middlewares/globalErrorHandlers";
+import notFound from "./app/middlewares/notFound";
 const app = express();
 
 app.use(
@@ -39,5 +40,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use(globalErrorhandler);
+
+app.use(notFound);
 
 export default app;
