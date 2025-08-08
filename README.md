@@ -29,8 +29,8 @@ It includes full **authentication flow** (register, login, logout, password rese
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone <your-repo-url>
-cd <your-project-folder>
+git clone https://github.com/Sadid205/parcel-delivery-system-assignment-5.git
+cd parcel-delivery-system
 ```
 
 2️⃣ Install Dependencies
@@ -41,24 +41,26 @@ Create a .env file in the root directory and configure:
 
 EXPRESS_SESSION_SECRET="EXPRESS_SESSION_SECRET"
 
-# Frontend URL
-
 FRONTEND_URL="FRONTEND_URL"
 
-#JWT
+# JWT
+
 JWT_ACCESS_SECRET="JWT_ACCESS_SECRET"
 JWT_ACCESS_EXPIRES="JWT_ACCESS_EXPIRES"
 JWT_REFRESH_SECRET="JWT_REFRESH_SECRET"
 JWT_REFRESH_EXPIRES="JWT_REFRESH_EXPIRES"
 
-#super admin credentials
+# SUPER ADMIN CREDENTIALS
+
 SUPER_ADMIN_EMAIL="SUPER_ADMIN_EMAIL"
 SUPER_ADMIN_PASSWORD="SUPER_ADMIN_PASSWORD"
 
-#bcrypt
+# BCRYPT
+
 BCRYPT_SALT_ROUND="BCRYPT_SALT_ROUND"
 
-#smtp gmail
+# SMTP GMAIL
+
 SMTP_HOST="SMTP_HOST"
 SMTP_PORT="SMTP_PORT"
 SMTP_USER="SMTP_USER"
@@ -69,10 +71,12 @@ NODE_ENV="NODE_ENV"
 
 PORT="PORT"
 
-#db
+# DB
+
 DB_URL="DB_URL"
 
-#redis
+# REDIS
+
 REDIS_HOST="REDIS_HOST"
 REDIS_PORT="REDIS_PORT"
 REDIS_USERNAME="REDIS_USERNAME"
