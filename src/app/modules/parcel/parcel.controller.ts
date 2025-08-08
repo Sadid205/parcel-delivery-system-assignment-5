@@ -57,7 +57,7 @@ const getParcelHistory = catchAsync(
 const cancelParcel = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const tracking_number = req.params.tracking_number;
-    const result = ParcelService.cancelParcel(
+    const result = await ParcelService.cancelParcel(
       tracking_number,
       (req.user as JwtPayload).userId
     );

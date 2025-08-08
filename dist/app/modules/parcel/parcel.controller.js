@@ -50,7 +50,7 @@ const getParcelHistory = (0, catchAsync_1.catchAsync)((req, res, next) => __awai
 }));
 const cancelParcel = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const tracking_number = req.params.tracking_number;
-    const result = parcel_service_1.ParcelService.cancelParcel(tracking_number, req.user.userId);
+    const result = yield parcel_service_1.ParcelService.cancelParcel(tracking_number, req.user.userId);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.default.OK,
