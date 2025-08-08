@@ -152,8 +152,3 @@ Base URL: https://parcel-delivery-system-beta.vercel.app
 
 📧 Contact
 For any issues or contributions, please contact abdullahalsadid@gmail.com
-
----
-
-If you want, I can also **add example `curl` requests for each endpoint** so anyone reading the README can test the API instantly from the terminal.  
-That will make your README even more developer-friendly.
