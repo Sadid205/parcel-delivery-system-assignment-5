@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Parcel Delivered</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f8ff;
+        color: #222;
+        padding: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background: #fff;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h2 {
+        color: #27ae60;
+      }
+      p {
+        font-size: 16px;
+      }
+      .tracking {
+        font-weight: 700;
+        font-size: 18px;
+        margin: 20px 0;
+        color: #2980b9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Dear <%= receiverName %>,</h2>
+      <p>Your parcel with tracking number:</p>
+      <p class="tracking"><%= trackingNumber %></p>
+      <p>has been successfully delivered.</p>
+      <p>Thank you for choosing our service!</p>
+    </div>
+  </body>
+</html>

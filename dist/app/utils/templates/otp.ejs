@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>OTP Code</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f7f9fc;
+        color: #333;
+        padding: 20px;
+      }
+      .container {
+        background-color: #ffffff;
+        max-width: 480px;
+        margin: 40px auto;
+        padding: 30px 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+      }
+      p {
+        font-size: 16px;
+        margin: 12px 0;
+      }
+      .otp-code {
+        font-size: 28px;
+        font-weight: 700;
+        color: #e74c3c;
+        letter-spacing: 3px;
+        margin: 15px 0;
+      }
+      .footer-text {
+        font-size: 13px;
+        color: #888;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Hello <%= name %>,</h2>
+      <p>Your OTP code is:</p>
+      <p class="otp-code"><%= otp %></p>
+      <p>This code is valid for <strong>3 minutes</strong>.</p>
+      <p class="footer-text">
+        If you did not request this, please ignore this email.
+      </p>
+    </div>
+  </body>
+</html>

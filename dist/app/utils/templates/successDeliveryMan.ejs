@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Parcel Delivery Confirmation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9fafb;
+        padding: 20px;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background-color: #ffffff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h2 {
+        color: #2e86de;
+      }
+      p {
+        font-size: 16px;
+      }
+      .details {
+        margin-top: 20px;
+        text-align: left;
+        font-size: 15px;
+        border-top: 1px solid #ddd;
+        padding-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Hello <%= deliveryManName %>,</h2>
+      <p>
+        Parcel with Tracking Number <strong><%= trackingNumber %></strong> has
+        been successfully marked as <strong>Delivered</strong>.
+      </p>
+
+      <div class="details">
+        <p><strong>Receiver Name:</strong> <%= receiverName %></p>
+        <p><strong>Receiver Email:</strong> <%= receiverEmail %></p>
+        <p><strong>Delivery Date:</strong> <%= deliveryDate %></p>
+      </div>
+
+      <p>Thank you for your hard work!</p>
+    </div>
+  </body>
+</html>

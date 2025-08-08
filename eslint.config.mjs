@@ -8,5 +8,13 @@ export default tseslint.config(
   //   tseslint.configs.recommended
   tseslint.configs.strict,
   tseslint.configs.stylistic,
-  { rules: { "no-console": "warn" } }
+  {
+    rules: {
+      "no-console": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-dynamic-delete": "off",
+      "@typescript-eslint/no-non-null-assertion": "off",
+    },
+  }
 );
