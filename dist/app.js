@@ -13,6 +13,7 @@ const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const passport_1 = __importDefault(require("passport"));
 require("./app/config/passport.config");
 const globalErrorHandlers_1 = require("./app/middlewares/globalErrorHandlers");
+const notFound_1 = __importDefault(require("./app/middlewares/notFound"));
 const app = (0, express_1.default)();
 app.use((0, express_session_1.default)({
     secret: env_1.envVars.EXPRESS_SESSION_SECRET,
@@ -36,4 +37,5 @@ app.get("/", (req, res) => {
     });
 });
 app.use(globalErrorHandlers_1.globalErrorhandler);
+app.use(notFound_1.default);
 exports.default = app;
