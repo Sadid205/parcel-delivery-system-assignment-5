@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Parcel Assignment Confirmation</title>
+  </head>
+  <body
+    style="font-family: Arial, sans-serif; background: #f8f9fa; padding: 20px"
+  >
+    <h2 style="color: #333">✅ Parcel Successfully Assigned</h2>
+    <p>Hello <strong><%= assignedBy.name %></strong>,</p>
+    <p>
+      You have successfully assigned the following parcel to
+      <strong><%= deliveryMan.name %></strong>:
+    </p>
+
+    <table style="border-collapse: collapse; width: 100%; margin-top: 10px">
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 8px">Tracking Number</td>
+        <td style="border: 1px solid #ddd; padding: 8px">
+          <%= parcel.tracking_number %>
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 8px">Sender</td>
+        <td style="border: 1px solid #ddd; padding: 8px">
+          <%= parcel.sender_name %>
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 8px">Recipient</td>
+        <td style="border: 1px solid #ddd; padding: 8px">
+          <%= parcel.recipient_name %>
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 8px">
+          Delivery Man Contact
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px">
+          <%= deliveryMan.phone %> | <%= deliveryMan.email %>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin-top: 15px">
+      This parcel is now marked as <strong><%= parcel.status %></strong> in the
+      system.
+    </p>
+  </body>
+</html>

@@ -64,7 +64,7 @@ const cancelParcel = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "Parcel Cancelled Successfull",
+      message: "Parcel Cancelled Successful",
       data: result,
     });
   }
@@ -79,16 +79,48 @@ const updateParcelStatus = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "Parcel Status Updated Successfull",
+      message: "Parcel Status Updated Successful",
       data: result,
     });
   }
 );
 const sendOtp = catchAsync(async () => {});
-const updateParcel = catchAsync(async () => {});
 const verifyOtp = catchAsync(async () => {});
-const assignParcel = catchAsync(async () => {});
+const assignParcel = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { tracking_number } = req.body;
+    const { id } = req.params;
+    const result = await ParcelService.assignParcel(
+      tracking_number,
+      id,
+      (req.user as JwtPayload).userId
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Parcel Assigned Successful",
+      data: result,
+    });
+  }
+);
 const getAssignedParcel = catchAsync(async () => {});
+const updateParcel = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const tracking_number = req.params.tracking_number;
+    const result = await ParcelService.updateParcel(
+      req.body,
+      tracking_number,
+      (req.user as JwtPayload).userId
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Parcel Updated Successfully",
+      data: result,
+    });
+  }
+);
 
 export const ParcelController = {
   createParcel,

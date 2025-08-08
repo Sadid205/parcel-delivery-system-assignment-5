@@ -52,4 +52,5 @@ export interface IParcel {
   parcel_type: IParcelType;
   description?: string;
   createdAt: Date;
+  assignedTo?: Types.ObjectId;
 }

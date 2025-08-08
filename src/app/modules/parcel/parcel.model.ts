@@ -58,6 +58,7 @@ export const parcelSchema = new Schema<IParcel>(
       required: true,
     },
     description: { type: String, required: false },
+    assignedTo: { type: Schema.ObjectId, ref: "User", required: false },
   },
   { timestamps: true, versionKey: false }
 );

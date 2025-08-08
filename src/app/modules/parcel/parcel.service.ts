@@ -15,7 +15,7 @@ import { sendEmail } from "../../utils/sendEmail";
 import { parcelSearchableFields } from "./parcel.constant";
 import AppError from "../../errorHelpers/AppErrors";
 import httpStatus from "http-status-codes";
-import { HydratedDocument } from "mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
 
 const createParcel = async (payload: Partial<IParcel>, userId: string) => {
   const { email, name, phone, address } = payload.receiver!;
@@ -222,11 +222,156 @@ const updateParcelStatus = async (
   await currentStatus.save();
   await parcel.save();
 };
+const assignParcel = async (
+  tracking_number: string,
+  id: string,
+  userId: string
+) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
+  }
+  const userObjectId = new mongoose.Types.ObjectId(id);
+  const trackingNumberObjectId = new mongoose.Types.ObjectId(tracking_number);
+  const delivery_man = await User.findOne({
+    _id: userObjectId,
+    role: Role.DELIVERY_MAN,
+  });
+  if (!delivery_man) {
+    throw new AppError(httpStatus.NOT_FOUND, "Delivary Man Not Found");
+  }
+  const parcel = await Parcel.findOne({ tracking_number })
+    .populate<{
+      current_status: IParcelStatus;
+    }>("current_staus", "status")
+    .populate<{ sender: IUser }>("sender", "name phone address");
+  if (!parcel) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found");
+  }
+  const currentStatus = ParcelStatus.hydrate(parcel.current_status);
+  if (
+    [
+      Status.CANCELLED,
+      Status.DELIVARED,
+      Status.RETURNED,
+      Status.BLOCKED,
+    ].includes(currentStatus.status)
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Your Parcel Is ${currentStatus.status} .You Can Not Assign Now`
+    );
+  }
+  const isAlreadyAssigned = delivery_man.assignedParcels?.includes(
+    trackingNumberObjectId
+  );
+  if (isAlreadyAssigned) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "This Parcel Is Already Assigned To This Delivery Man"
+    );
+  }
+  if (parcel.assignedTo) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "This Parcel Is Already Assigned To A Delivery Man"
+    );
+  }
+
+  delivery_man.assignedParcels = [
+    ...(delivery_man.assignedParcels || []),
+    parcel._id,
+  ];
+  await delivery_man.save();
+
+  const templateData = {
+    parcel: {
+      tracking_number: parcel.tracking_number,
+      sender_name: parcel.sender.name,
+      sender_phone: parcel.sender.phone,
+      sender_address: parcel.sender.address,
+      recipient_name: parcel.receiver.name,
+      recipient_phone: parcel.receiver.phone,
+      recipient_address: parcel.receiver.address,
+      weight: parcel.weight,
+      status: "Assigned",
+      assigned_date: DateTime.now().toLocaleString(DateTime.DATE_MED),
+    },
+    deliveryMan: {
+      name: delivery_man.name,
+      phone: delivery_man.phone,
+      email: delivery_man.email,
+    },
+    assignedBy: {
+      name: user.name,
+      email: user.email,
+    },
+  };
+
+  await Promise.all([
+    sendEmail({
+      to: delivery_man.email,
+      subject: "Parcel Assign Confirmation",
+      templateName: "assignedParcelDeliveryMan",
+      templateData,
+    }),
+    sendEmail({
+      to: user.email,
+      subject: "Parcel Assign Confirmation",
+      templateName: "assignedParcelAdmin",
+      templateData,
+    }),
+  ]);
+
+  return null;
+};
+const updateParcel = async (
+  payload: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    description?: string;
+    weight?: number;
+  },
+  tracking_number: string,
+  usreId: string
+) => {
+  const parcel = await Parcel.findOne({ tracking_number }).populate<{
+    current_status: IParcelStatus;
+  }>("current_status", "status");
+  if (!parcel) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found!");
+  }
+  const userObjectId = new mongoose.Types.ObjectId(usreId);
+  if (parcel.sender !== userObjectId) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "You Can Not Update This Parcel"
+    );
+  }
+
+  if (
+    ![Status.REQUESTED, Status.APPROVED, Status.RESHEDULED].includes(
+      parcel.current_status.status
+    )
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Your Parcel Is ${parcel.current_status.status} .You Can Not Update Now`
+    );
+  }
+  const updatedParcel = await Parcel.findOneAndUpdate(
+    { tracking_number },
+    { ...payload },
+    { new: true }
+  );
+  return updatedParcel;
+};
+
+const getAssignedParcel = async () => {};
 const sendOtp = async () => {};
 const verifyOtp = async () => {};
-const assignParcel = async () => {};
-const getAssignedParcel = async () => {};
-const updateParcel = async () => {};
 
 export const ParcelService = {
   createParcel,

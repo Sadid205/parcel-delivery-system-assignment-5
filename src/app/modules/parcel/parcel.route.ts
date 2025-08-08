@@ -46,7 +46,7 @@ router.patch(
   ParcelController.updateParcel
 );
 router.post(
-  "/assign",
+  "/assign/:id",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   validatedRequest(assignParcelSchema),
   ParcelController.assignParcel
