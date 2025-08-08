@@ -47,11 +47,11 @@ export const sendEmail = async ({
         contentType: attachment.contentType,
       })),
     });
-    console.log({
-      __dirname,
-      path,
-      templatePath,
-    });
+    // console.log({
+    //   __dirname,
+    //   path,
+    //   templatePath,
+    // });
     console.log(`\u2709\uFE0F Email sent to ${to}: ${info.messageId}`);
   } catch (error: any) {
     console.log("Email sending error", error.message);

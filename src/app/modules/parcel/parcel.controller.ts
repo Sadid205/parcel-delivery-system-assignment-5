@@ -157,7 +157,21 @@ const verifyOtp = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "OTP Verified Successfully",
+      message: "Parcel Delivered Successful",
+      data: result,
+    });
+  }
+);
+
+const getSingleParcel = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { tracking_number } = req.params;
+    const result = await ParcelService.getSingleParcel(tracking_number);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Parcel Retrieved Successfully",
       data: result,
     });
   }
@@ -174,4 +188,5 @@ export const ParcelController = {
   assignParcel,
   getAssignedParcel,
   updateParcel,
+  getSingleParcel,
 };

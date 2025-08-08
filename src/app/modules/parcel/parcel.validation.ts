@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { Schema } from "zod";
 import {
   IPaidStatus,
   IParcelStatus,
@@ -42,7 +42,12 @@ export const createParcelZodSchema = z.object({
   parcel_type: z.enum(Object.values(IParcelType) as [string]),
 });
 
-export const updateParcelZodSchema = createParcelZodSchema.partial();
+export const updateParcelZodSchema = z.object({
+  receiver: createParcelZodSchema.shape.receiver.partial().optional(),
+  description: createParcelZodSchema.shape.description.optional(),
+  weight: createParcelZodSchema.shape.weight.optional(),
+  parcel_type: createParcelZodSchema.shape.parcel_type.optional(),
+});
 
 export const updateParcelStatusSchema = z
   .object({
@@ -95,10 +100,9 @@ export const sendOtpSchema = z.object({
 
 export const verifyOtpSchema = z.object({
   otp: z
-    .number()
-    .int()
-    .min(100000, { message: "OTP must be 6 digits" })
-    .max(999999, { message: "OTP must be 6 digits" }),
+    .string()
+    .length(6, { message: "OTP must be exactly 6 digits" })
+    .regex(/^\d{6}$/, { message: "OTP must contain only digits" }),
   tracking_number: z.string().regex(/^TRK-\d{13}-\d{3}$/, {
     message:
       "Invalid Tracking Number Format. Expected: TRK-<13digits>-<3digits>",

@@ -119,7 +119,10 @@ const createParcel = async (payload: Partial<IParcel>, userId: string) => {
 };
 
 const getAllParcel = async (query: Record<string, string>) => {
-  const queryBuilder = new QueryBuilder(Parcel.find(), query);
+  const queryBuilder = new QueryBuilder(
+    Parcel.find().populate("current_status", null),
+    query
+  );
   const parcels = queryBuilder
     .search(parcelSearchableFields)
     .filter()
@@ -143,7 +146,7 @@ const getParcelHistory = async (
 
   const parcelsQuery = Parcel.find({
     $or: [{ sender: userId }, { "receiver.email": user?.email }],
-  });
+  }).populate("current_status", null);
 
   const queryBuilder = new QueryBuilder(parcelsQuery, query);
   const parcels = queryBuilder
@@ -184,7 +187,9 @@ const cancelParcel = async (tracking_number: string, userId: string) => {
     );
   }
   currentStatus.status = Status.CANCELLED;
+  parcel.trackingEvents = [...parcel.trackingEvents, currentStatus];
   await currentStatus.save();
+  await parcel.save();
 };
 const updateParcelStatus = async (
   tracking_number: string,
@@ -196,9 +201,11 @@ const updateParcelStatus = async (
   }
 ) => {
   const { status, paid_status, fees, delivary_date } = payload;
-  const parcel = await Parcel.findOne({ tracking_number }).populate<{
-    current_status: IParcelStatus;
-  }>("current_status", "status");
+  const parcel = await Parcel.findOne({ tracking_number })
+    .populate<{
+      current_status: IParcelStatus;
+    }>("current_status", "status paid_status")
+    .populate<{ sender: IUser }>("sender", null);
   if (!parcel) {
     throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found");
   }
@@ -210,9 +217,21 @@ const updateParcelStatus = async (
     );
   }
   if (status) {
+    if (status === currentStatus.status) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        `Your Parcel Is Already ${status}.`
+      );
+    }
     currentStatus.status = status;
   }
   if (paid_status) {
+    if (paid_status === currentStatus.paid_status) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        `Your Parcel Is Already ${paid_status}.`
+      );
+    }
     currentStatus.paid_status = paid_status;
   }
   if (fees) {
@@ -221,8 +240,46 @@ const updateParcelStatus = async (
   if (delivary_date) {
     parcel.delivery_date = delivary_date;
   }
+  parcel.current_status = currentStatus;
+  parcel.trackingEvents = [...(parcel.trackingEvents ?? []), currentStatus];
   await currentStatus.save();
   await parcel.save();
+  const templateData = {
+    tracking_number: parcel.tracking_number,
+    status: currentStatus.status,
+    paid_status: currentStatus.paid_status,
+    fees: parcel.fees,
+    delivery_date: parcel.delivery_date,
+    email_receiver_name: "",
+    sender_email: parcel.sender.email,
+    receiver_name: parcel.receiver.name,
+    receiver_address: parcel.receiver.address,
+    receiver_phone: parcel.receiver.phone,
+    receiver_email: parcel.receiver.email,
+    date: DateTime.now().toLocaleString(DateTime.DATE_MED),
+    time: DateTime.now().toLocaleString(DateTime.TIME_WITH_SECONDS),
+  };
+  await Promise.all([
+    sendEmail({
+      to: parcel.receiver.email,
+      subject: "Parcel Status Update",
+      templateName: "parcelStatusUpdate",
+      templateData: {
+        ...templateData,
+        email_receiver_name: parcel.receiver.name,
+      },
+    }),
+    sendEmail({
+      to: parcel.sender.email,
+      subject: "Parcel Status Update",
+      templateName: "parcelStatusUpdate",
+      templateData: {
+        ...templateData,
+        email_receiver_name: parcel.sender.name,
+      },
+    }),
+  ]);
+  return parcel;
 };
 const assignParcel = async (
   tracking_number: string,
@@ -234,7 +291,6 @@ const assignParcel = async (
     throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
   }
   const userObjectId = new mongoose.Types.ObjectId(id);
-  const trackingNumberObjectId = new mongoose.Types.ObjectId(tracking_number);
   const delivery_man = await User.findOne({
     _id: userObjectId,
     role: Role.DELIVERY_MAN,
@@ -245,7 +301,7 @@ const assignParcel = async (
   const parcel = await Parcel.findOne({ tracking_number })
     .populate<{
       current_status: IParcelStatus;
-    }>("current_staus", "status")
+    }>("current_status", "status")
     .populate<{ sender: IUser }>("sender", "name phone address");
   if (!parcel) {
     throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found");
@@ -264,9 +320,7 @@ const assignParcel = async (
       `Your Parcel Is ${currentStatus.status} .You Can Not Assign Now`
     );
   }
-  const isAlreadyAssigned = delivery_man.assignedParcels?.includes(
-    trackingNumberObjectId
-  );
+  const isAlreadyAssigned = delivery_man.assignedParcels?.includes(parcel._id);
   if (isAlreadyAssigned) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -280,10 +334,12 @@ const assignParcel = async (
     );
   }
 
+  parcel.assignedTo = delivery_man._id;
   delivery_man.assignedParcels = [
     ...(delivery_man.assignedParcels || []),
     parcel._id,
   ];
+  await parcel.save();
   await delivery_man.save();
 
   const templateData = {
@@ -337,7 +393,7 @@ const updateParcel = async (
     weight?: number;
   },
   tracking_number: string,
-  usreId: string
+  userId: string
 ) => {
   const parcel = await Parcel.findOne({ tracking_number }).populate<{
     current_status: IParcelStatus;
@@ -345,8 +401,8 @@ const updateParcel = async (
   if (!parcel) {
     throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found!");
   }
-  const userObjectId = new mongoose.Types.ObjectId(usreId);
-  if (parcel.sender !== userObjectId) {
+
+  if (parcel.sender.toString() != userId) {
     throw new AppError(
       httpStatus.UNAUTHORIZED,
       "You Can Not Update This Parcel"
@@ -397,7 +453,16 @@ const getAssignedParcel = async (userId: string) => {
   return filteredAssignedParcel;
 };
 const sendOtp = async (tracking_number: string) => {
-  const parcel = await Parcel.findOne({ tracking_number });
+  const parcel = await Parcel.findOne({ tracking_number }).populate<{
+    current_status: IParcelStatus;
+  }>("current_status", "status paid_status");
+  if (!parcel) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found");
+  }
+  const currentStatus = ParcelStatus.hydrate(parcel.current_status);
+  if (currentStatus.status === Status.DELIVERED) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel Is Already Delivered");
+  }
   if (!parcel) {
     throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found");
   }
@@ -437,7 +502,7 @@ const verifyOtp = async (
   }
   const parcel = await Parcel.findOne({ tracking_number }).populate<{
     current_status: IParcelStatus;
-  }>("current_status", "status");
+  }>("current_status", "status paid_status");
   if (!parcel) {
     throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found");
   }
@@ -456,7 +521,10 @@ const verifyOtp = async (
   }
   currentStatus.status = Status.DELIVERED;
   currentStatus.paid_status = IPaidStatus.PAID;
+  parcel.current_status = currentStatus;
+  parcel.trackingEvents = [...(parcel.trackingEvents ?? []), currentStatus];
   await currentStatus.save();
+  await parcel.save();
 
   const receiverEmailData = {
     receiverName: parcel.receiver.name,
@@ -483,6 +551,16 @@ const verifyOtp = async (
       templateName: "successReceiver",
     }),
   ]);
+  return parcel;
+};
+const getSingleParcel = async (tracking_number: string) => {
+  const parcel = await Parcel.findOne({ tracking_number }).populate<{
+    current_status: IParcelStatus;
+  }>("current_status", "status paid_status");
+  if (!parcel) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found");
+  }
+  return parcel;
 };
 
 export const ParcelService = {
@@ -496,4 +574,5 @@ export const ParcelService = {
   assignParcel,
   getAssignedParcel,
   updateParcel,
+  getSingleParcel,
 };

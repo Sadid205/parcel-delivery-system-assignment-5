@@ -22,12 +22,14 @@ export class QueryBuilder<T> {
 
   search(searchableField: string[]): this {
     const searchTerm = this.query.searchTerm || "";
-    const searchQuery = {
-      $or: searchableField.map((field) => ({
-        [field]: { $regex: searchTerm, $options: "i" },
-      })),
-    };
-    this.modelQuery = this.modelQuery.find(searchQuery);
+    if (searchTerm) {
+      const searchQuery = {
+        $or: searchableField.map((field) => ({
+          [field]: { $regex: searchTerm, $options: "i" },
+        })),
+      };
+      this.modelQuery = this.modelQuery.find(searchQuery);
+    }
     return this;
   }
 

@@ -8,6 +8,7 @@ import {
   createParcelZodSchema,
   sendOtpSchema,
   updateParcelStatusSchema,
+  updateParcelZodSchema,
   verifyOtpSchema,
 } from "./parcel.validation";
 
@@ -29,28 +30,7 @@ router.get(
   checkAuth(...Object.values(Role)),
   ParcelController.getParcelHistory
 );
-router.patch(
-  "/cancel/:tracking_number",
-  checkAuth(...Object.values(Role)),
-  ParcelController.cancelParcel
-);
-router.patch(
-  "/update-status/:tracking_number",
-  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
-  validatedRequest(updateParcelStatusSchema),
-  ParcelController.updateParcelStatus
-);
-router.patch(
-  "/:tracking_number",
-  checkAuth(...Object.values(Role)),
-  ParcelController.updateParcel
-);
-router.post(
-  "/assign/:id",
-  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
-  validatedRequest(assignParcelSchema),
-  ParcelController.assignParcel
-);
+
 router.get(
   "/assigned-parcel",
   checkAuth(Role.DELIVERY_MAN),
@@ -67,6 +47,34 @@ router.post(
   checkAuth(Role.DELIVERY_MAN),
   validatedRequest(verifyOtpSchema),
   ParcelController.verifyOtp
+);
+router.get(
+  "/cancel/:tracking_number",
+  checkAuth(...Object.values(Role)),
+  ParcelController.cancelParcel
+);
+router.patch(
+  "/update-status/:tracking_number",
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  validatedRequest(updateParcelStatusSchema),
+  ParcelController.updateParcelStatus
+);
+router.patch(
+  "/:tracking_number",
+  checkAuth(...Object.values(Role)),
+  validatedRequest(updateParcelZodSchema),
+  ParcelController.updateParcel
+);
+router.post(
+  "/assign/:id",
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  validatedRequest(assignParcelSchema),
+  ParcelController.assignParcel
+);
+router.get(
+  "/:tracking_number",
+  checkAuth(...Object.values(Role)),
+  ParcelController.getSingleParcel
 );
 
 export const ParcelRoute = router;

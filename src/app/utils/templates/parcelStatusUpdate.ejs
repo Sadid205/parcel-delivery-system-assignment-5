@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Parcel Status Update</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f9f9f9;
+        padding: 20px;
+      }
+      .container {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 600px;
+        margin: auto;
+      }
+      h2 {
+        color: #333;
+      }
+      .status {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #0066cc;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+      th,
+      td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 0.9em;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Hello <%= email_receiver_name %>,</h2>
+      <p>Your parcel has been updated with the following details:</p>
+      <p class="status">New Status: <%= status %></p>
+
+      <table>
+        <tr>
+          <th>Tracking Number</th>
+          <td><%= tracking_number %></td>
+        </tr>
+        <tr>
+          <th>Delivery Date</th>
+          <td><%= delivery_date ? delivery_date.toDateString() : "N/A" %></td>
+        </tr>
+        <tr>
+          <th>Fees</th>
+          <td><%= fees ? fees + " BDT" : "N/A" %></td>
+        </tr>
+        <tr>
+          <th>Paid Status</th>
+          <td><%= paid_status %></td>
+        </tr>
+      </table>
+
+      <h3>Receiver Information:</h3>
+      <table>
+        <tr>
+          <th>Name</th>
+          <td><%= receiver_name %></td>
+        </tr>
+        <tr>
+          <th>Address</th>
+          <td><%= receiver_address %></td>
+        </tr>
+        <tr>
+          <th>Phone</th>
+          <td><%= receiver_phone %></td>
+        </tr>
+      </table>
+
+      <p class="footer">Updated on <%= date %> at <%= time %></p>
+    </div>
+  </body>
+</html>
