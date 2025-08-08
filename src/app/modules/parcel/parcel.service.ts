@@ -16,6 +16,8 @@ import { parcelSearchableFields } from "./parcel.constant";
 import AppError from "../../errorHelpers/AppErrors";
 import httpStatus from "http-status-codes";
 import mongoose, { HydratedDocument } from "mongoose";
+import { generateOTP, OTP_EXPIRATION } from "../otp/otp.service";
+import { redisClient } from "../../config/redis.config";
 
 const createParcel = async (payload: Partial<IParcel>, userId: string) => {
   const { email, name, phone, address } = payload.receiver!;
@@ -201,7 +203,7 @@ const updateParcelStatus = async (
     throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found");
   }
   const currentStatus = ParcelStatus.hydrate(parcel.current_status);
-  if ([Status.CANCELLED, Status.DELIVARED].includes(currentStatus.status)) {
+  if ([Status.CANCELLED, Status.DELIVERED].includes(currentStatus.status)) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
       `Your Parcel Is ${currentStatus.status} .You Can Not Update Now`
@@ -252,7 +254,7 @@ const assignParcel = async (
   if (
     [
       Status.CANCELLED,
-      Status.DELIVARED,
+      Status.DELIVERED,
       Status.RETURNED,
       Status.BLOCKED,
     ].includes(currentStatus.status)
@@ -369,9 +371,119 @@ const updateParcel = async (
   return updatedParcel;
 };
 
-const getAssignedParcel = async () => {};
-const sendOtp = async () => {};
-const verifyOtp = async () => {};
+const getAssignedParcel = async (userId: string) => {
+  const user = await User.findOne({
+    _id: userId,
+    role: Role.DELIVERY_MAN,
+  }).populate<{ assignedParcels: IParcel[] }>({
+    path: "assignedParcels",
+    populate: {
+      path: "current_status",
+    },
+  });
+  if (!user) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized");
+  }
+
+  const assignedParcles = Array.isArray(user.assignedParcels)
+    ? user.assignedParcels
+    : [];
+
+  const filteredAssignedParcel = assignedParcles.filter(
+    (parcel) =>
+      (parcel.current_status as unknown as IParcelStatus)?.status !==
+      Status.DELIVERED
+  );
+  return filteredAssignedParcel;
+};
+const sendOtp = async (tracking_number: string) => {
+  const parcel = await Parcel.findOne({ tracking_number });
+  if (!parcel) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found");
+  }
+
+  const { email, name } = parcel.receiver;
+  const otp = generateOTP();
+  const redisKey = `otp:${email}`;
+  await redisClient.set(redisKey, otp, {
+    expiration: {
+      type: "EX",
+      value: OTP_EXPIRATION,
+    },
+  });
+  await sendEmail({
+    to: email,
+    subject: "Your Parcel Confirmation OTP Code",
+    templateName: "otp",
+    templateData: {
+      name,
+      otp,
+    },
+  });
+  return null;
+};
+
+const verifyOtp = async (
+  otp: string,
+  tracking_number: string,
+  userId: string
+) => {
+  const delivery_man = await User.findOne({
+    _id: userId,
+    role: Role.DELIVERY_MAN,
+  });
+  if (!delivery_man) {
+    throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
+  }
+  const parcel = await Parcel.findOne({ tracking_number }).populate<{
+    current_status: IParcelStatus;
+  }>("current_status", "status");
+  if (!parcel) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found");
+  }
+  const currentStatus = ParcelStatus.hydrate(parcel.current_status);
+  if (currentStatus.status === Status.DELIVERED) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel Is Already Delivered");
+  }
+  const { email, name } = parcel.receiver;
+  const redisKey = `otp:${email}`;
+  const savedOtp = await redisClient.get(redisKey);
+  if (!savedOtp) {
+    throw new AppError(httpStatus.NOT_FOUND, "Invalid OTP");
+  }
+  if (savedOtp !== otp) {
+    throw new AppError(httpStatus.NOT_FOUND, "Invalid OTP");
+  }
+  currentStatus.status = Status.DELIVERED;
+  currentStatus.paid_status = IPaidStatus.PAID;
+  await currentStatus.save();
+
+  const receiverEmailData = {
+    receiverName: parcel.receiver.name,
+    trackingNumber: parcel.tracking_number,
+  };
+  const deliveryManEmailData = {
+    deliveryManName: delivery_man.name,
+    trackingNumber: parcel.tracking_number,
+    receiverName: parcel.receiver.name,
+    receiverEmail: parcel.receiver.email,
+    deliveryDate: DateTime.now().toLocaleString(DateTime.DATE_MED),
+  };
+  await Promise.all([
+    sendEmail({
+      to: delivery_man.email,
+      subject: "Parcel Delivery Successfull",
+      templateData: deliveryManEmailData,
+      templateName: "successDeliveryMan",
+    }),
+    sendEmail({
+      to: parcel.receiver.email,
+      subject: "Parcel Delivery Confirmation",
+      templateData: receiverEmailData,
+      templateName: "successReceiver",
+    }),
+  ]);
+};
 
 export const ParcelService = {
   createParcel,

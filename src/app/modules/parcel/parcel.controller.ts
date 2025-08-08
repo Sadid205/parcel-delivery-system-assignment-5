@@ -84,8 +84,7 @@ const updateParcelStatus = catchAsync(
     });
   }
 );
-const sendOtp = catchAsync(async () => {});
-const verifyOtp = catchAsync(async () => {});
+
 const assignParcel = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { tracking_number } = req.body;
@@ -103,7 +102,6 @@ const assignParcel = catchAsync(
     });
   }
 );
-const getAssignedParcel = catchAsync(async () => {});
 const updateParcel = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const tracking_number = req.params.tracking_number;
@@ -117,6 +115,49 @@ const updateParcel = catchAsync(
       success: true,
       statusCode: httpStatus.OK,
       message: "Parcel Updated Successfully",
+      data: result,
+    });
+  }
+);
+
+const getAssignedParcel = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await ParcelService.getAssignedParcel(
+      (req.user as JwtPayload).userId
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Your Assigned Parcel Retrieve Successfully",
+      data: result,
+    });
+  }
+);
+
+const sendOtp = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { tracking_number } = req.body;
+    const result = await ParcelService.sendOtp(tracking_number);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "OTP Sent Successfully",
+      data: result,
+    });
+  }
+);
+const verifyOtp = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { otp, tracking_number } = req.body;
+    const result = await ParcelService.verifyOtp(
+      otp,
+      tracking_number,
+      (req.user as JwtPayload).userId
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "OTP Verified Successfully",
       data: result,
     });
   }
