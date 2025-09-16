@@ -8,7 +8,7 @@ export const handleDuplicateKeyError = (err: any): TGenericErrorResponse => {
   const errorSources: TMongooseErrorSource[] = [];
   for (const key in err.keyPattern) {
     errorSources.push({
-      field: key,
+      path: key,
       value: err.keyValue[key],
       message: `${key} '${err.keyValue[key]}' Is Already Taken`,
     });

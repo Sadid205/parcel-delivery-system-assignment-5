@@ -1,13 +1,12 @@
-import { JwtPayload } from "jsonwebtoken";
-import { createNewAccessTokenWithRefreshToken } from "../../utils/userTokens";
 import bcryptjs from "bcryptjs";
-import { User } from "../user/user.model";
-import AppError from "../../errorHelpers/AppErrors";
 import httpStatus from "http-status-codes";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../../config/env";
-import { IAuthProvider, IsActive } from "../user/user.interface";
-import jwt from "jsonwebtoken";
+import AppError from "../../errorHelpers/AppErrors";
 import { sendEmail } from "../../utils/sendEmail";
+import { createNewAccessTokenWithRefreshToken } from "../../utils/userTokens";
+import { IAuthProvider, IsActive } from "../user/user.interface";
+import { User } from "../user/user.model";
 
 const getNewAccessToken = async (refreshToken: string) => {
   const newAccessToken = await createNewAccessTokenWithRefreshToken(
@@ -97,7 +96,7 @@ const forgotPassword = async (email: string) => {
   const resetToken = jwt.sign(jwtPayload, envVars.JWT.JWT_ACCESS_SECRET, {
     expiresIn: "10m",
   });
-  const resetUILink = `${envVars.FRONTEND_URL}/reset-password?id=${isUserExist._id}&token=${resetToken}`;
+  const resetUILink = `${envVars.FRONTEND_URL}/public/reset-password?id=${isUserExist._id}&token=${resetToken}`;
   sendEmail({
     to: isUserExist.email,
     subject: "Password Reset",

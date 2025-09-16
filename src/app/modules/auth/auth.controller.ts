@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../../utils/catchAsync";
+import httpStatus from "http-status-codes";
+import { JwtPayload } from "jsonwebtoken";
 import passport from "passport";
 import AppError from "../../errorHelpers/AppErrors";
-import { createUserTokens } from "../../utils/userTokens";
-import { setAuthCookie } from "../../utils/setCookie";
+import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
-import httpStatus from "http-status-codes";
+import { setAuthCookie } from "../../utils/setCookie";
+import { createUserTokens } from "../../utils/userTokens";
 import { AuthServices } from "./auth.service";
-import { JwtPayload } from "jsonwebtoken";
 
 const credentialsLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -81,6 +81,7 @@ const setPassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user as JwtPayload;
     const { password } = req.body;
+    console.log({ decodedToken, body: req.body });
     await AuthServices.setPassword(decodedToken.userId, password);
 
     sendResponse(res, {
