@@ -1,5 +1,4 @@
 import { Types } from "mongoose";
-import { IParcel } from "../parcel/parcel.interface";
 
 export enum IsActive {
   ACTIVE = "ACTIVE",

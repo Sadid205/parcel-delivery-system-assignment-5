@@ -9,7 +9,7 @@ export enum Status {
   CANCELLED = "CANCELLED",
   BLOCKED = "BLOCKED",
   RETURNED = "RETURNED",
-  RESHEDULED = "RESHEDULED",
+  RESCHEDULED = "RESCHEDULED",
 }
 
 export enum IPaidStatus {
@@ -21,7 +21,7 @@ export enum IParcelType {
   DOCUMENT = "DOCUMENT",
   BOX = "BOX",
   FRAGILE = "FRAGILE",
-  LIQUIED = "LIQUID",
+  LIQUID = "LIQUID",
   FOOD = "FOOD",
   ELECTRONICS = "ELECTRONICS",
   OTHER = "OTHER",

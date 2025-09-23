@@ -1,23 +1,22 @@
-import { JwtPayload } from "jsonwebtoken";
+import httpStatus from "http-status-codes";
+import { DateTime } from "luxon";
+import mongoose from "mongoose";
+import { redisClient } from "../../config/redis.config";
+import AppError from "../../errorHelpers/AppErrors";
+import { getTrackingNumber } from "../../utils/getTrackingNumber";
+import { QueryBuilder } from "../../utils/queryBuilder";
+import { sendEmail } from "../../utils/sendEmail";
+import { generateOTP, OTP_EXPIRATION } from "../otp/otp.service";
+import { IUser, Role } from "../user/user.interface";
+import { User } from "../user/user.model";
+import { parcelSearchableFields } from "./parcel.constant";
 import {
   IPaidStatus,
   IParcel,
   IParcelStatus,
   Status,
 } from "./parcel.interface";
-import { User } from "../user/user.model";
 import { Parcel, ParcelStatus } from "./parcel.model";
-import { getTrackingNumber } from "../../utils/getTrackingNumber";
-import { DateTime } from "luxon";
-import { QueryBuilder } from "../../utils/queryBuilder";
-import { IUser, Role } from "../user/user.interface";
-import { sendEmail } from "../../utils/sendEmail";
-import { parcelSearchableFields } from "./parcel.constant";
-import AppError from "../../errorHelpers/AppErrors";
-import httpStatus from "http-status-codes";
-import mongoose, { HydratedDocument } from "mongoose";
-import { generateOTP, OTP_EXPIRATION } from "../otp/otp.service";
-import { redisClient } from "../../config/redis.config";
 
 const createParcel = async (payload: Partial<IParcel>, userId: string) => {
   const { email, name, phone, address } = payload.receiver!;
@@ -150,8 +149,8 @@ const getParcelHistory = async (
 
   const queryBuilder = new QueryBuilder(parcelsQuery, query);
   const parcels = queryBuilder
-    .search(parcelSearchableFields)
     .filter()
+    .search(parcelSearchableFields)
     .sort()
     .paginate();
   const [data, meta] = await Promise.all([
@@ -177,7 +176,7 @@ const cancelParcel = async (tracking_number: string, userId: string) => {
   }
   const currentStatus = ParcelStatus.hydrate(parcel.current_status);
   if (
-    ![Status.REQUESTED, Status.APPROVED, Status.RESHEDULED].includes(
+    ![Status.REQUESTED, Status.APPROVED, Status.RESCHEDULED].includes(
       currentStatus.status
     )
   ) {
@@ -410,7 +409,7 @@ const updateParcel = async (
   }
 
   if (
-    ![Status.REQUESTED, Status.APPROVED, Status.RESHEDULED].includes(
+    ![Status.REQUESTED, Status.APPROVED, Status.RESCHEDULED].includes(
       parcel.current_status.status
     )
   ) {

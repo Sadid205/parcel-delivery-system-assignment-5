@@ -28,7 +28,9 @@ export class QueryBuilder<T> {
           [field]: { $regex: searchTerm, $options: "i" },
         })),
       };
-      this.modelQuery = this.modelQuery.find(searchQuery);
+      this.modelQuery = this.modelQuery.find({
+        $and: [this.modelQuery.getQuery(), searchQuery],
+      });
     }
     return this;
   }
@@ -58,7 +60,9 @@ export class QueryBuilder<T> {
   }
 
   async getMeta() {
-    const totalDocuments = await this.modelQuery.model.countDocuments();
+    const totalDocuments = await this.modelQuery.model.countDocuments(
+      this.modelQuery.getQuery()
+    );
     const page = Number(this.query.page) || 1;
     const limit = Number(this.query.limit) || 10;
     const totalPage = Math.ceil(totalDocuments / limit);
