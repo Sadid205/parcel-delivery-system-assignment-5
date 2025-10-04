@@ -194,13 +194,13 @@ const updateParcelStatus = async (
   tracking_number: string,
   payload: {
     fees?: number;
-    delivary_date?: Date;
+    delivery_date?: Date;
     status?: Status;
     paid_status?: IPaidStatus;
   }
 ) => {
-  const { status, paid_status, fees, delivary_date } = payload;
-  const parcel = await Parcel.findOne({ tracking_number })
+  const { status, paid_status, fees, delivery_date } = payload;
+  const parcel = await Parcel.findOne({ tracking_number: tracking_number })
     .populate<{
       current_status: IParcelStatus;
     }>("current_status", "status paid_status")
@@ -225,19 +225,19 @@ const updateParcelStatus = async (
     currentStatus.status = status;
   }
   if (paid_status) {
-    if (paid_status === currentStatus.paid_status) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        `Your Parcel Is Already ${paid_status}.`
-      );
-    }
+    // if (paid_status === IPaidStatus.PAID) {
+    //   throw new AppError(
+    //     httpStatus.BAD_REQUEST,
+    //     `Your Parcel Is Already ${paid_status}.`
+    //   );
+    // }
     currentStatus.paid_status = paid_status;
   }
   if (fees) {
     parcel.fees = fees;
   }
-  if (delivary_date) {
-    parcel.delivery_date = delivary_date;
+  if (delivery_date) {
+    parcel.delivery_date = delivery_date;
   }
   parcel.current_status = currentStatus;
   parcel.trackingEvents = [...(parcel.trackingEvents ?? []), currentStatus];

@@ -76,6 +76,7 @@ const updateParcelStatus = catchAsync(
       tracking_number,
       req.body
     );
+    // console.log(req.body.delivery_date);
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
@@ -89,6 +90,7 @@ const assignParcel = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { tracking_number } = req.body;
     const { id } = req.params;
+    console.log(tracking_number);
     const result = await ParcelService.assignParcel(
       tracking_number,
       id,
@@ -137,6 +139,7 @@ const getAssignedParcel = catchAsync(
 const sendOtp = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { tracking_number } = req.body;
+    console.log(tracking_number);
     const result = await ParcelService.sendOtp(tracking_number);
     sendResponse(res, {
       success: true,

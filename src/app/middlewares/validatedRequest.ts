@@ -5,6 +5,7 @@ import { ZodObject, ZodRawShape } from "zod";
 export const validatedRequest =
   (zodSchema: ZodObject<ZodRawShape>) =>
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
     try {
       if (req.body.data) {
         req.body = JSON.parse(req.body.data);
