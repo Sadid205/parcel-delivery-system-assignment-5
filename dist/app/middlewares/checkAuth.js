@@ -14,14 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkAuth = void 0;
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
-const AppErrors_1 = __importDefault(require("../errorHelpers/AppErrors"));
-const jwt_1 = require("../utils/jwt");
 const env_1 = require("../config/env");
+const AppErrors_1 = __importDefault(require("../errorHelpers/AppErrors"));
 const user_interface_1 = require("../modules/user/user.interface");
 const user_model_1 = require("../modules/user/user.model");
+const jwt_1 = require("../utils/jwt");
 const checkAuth = (...authRoles) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const accessToken = req.headers.authorization;
+        const accessToken = req.headers.authorization || req.cookies.accessToken;
         if (!accessToken) {
             throw new AppErrors_1.default(http_status_codes_1.default.NOT_FOUND, "No Token Received");
         }

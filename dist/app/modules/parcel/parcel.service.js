@@ -24,20 +24,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ParcelService = void 0;
-const parcel_interface_1 = require("./parcel.interface");
-const user_model_1 = require("../user/user.model");
-const parcel_model_1 = require("./parcel.model");
-const getTrackingNumber_1 = require("../../utils/getTrackingNumber");
-const luxon_1 = require("luxon");
-const queryBuilder_1 = require("../../utils/queryBuilder");
-const user_interface_1 = require("../user/user.interface");
-const sendEmail_1 = require("../../utils/sendEmail");
-const parcel_constant_1 = require("./parcel.constant");
-const AppErrors_1 = __importDefault(require("../../errorHelpers/AppErrors"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
+const luxon_1 = require("luxon");
 const mongoose_1 = __importDefault(require("mongoose"));
-const otp_service_1 = require("../otp/otp.service");
 const redis_config_1 = require("../../config/redis.config");
+const AppErrors_1 = __importDefault(require("../../errorHelpers/AppErrors"));
+const getTrackingNumber_1 = require("../../utils/getTrackingNumber");
+const queryBuilder_1 = require("../../utils/queryBuilder");
+const sendEmail_1 = require("../../utils/sendEmail");
+const otp_service_1 = require("../otp/otp.service");
+const user_interface_1 = require("../user/user.interface");
+const user_model_1 = require("../user/user.model");
+const parcel_constant_1 = require("./parcel.constant");
+const parcel_interface_1 = require("./parcel.interface");
+const parcel_model_1 = require("./parcel.model");
 const createParcel = (payload, userId) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, name, phone, address } = payload.receiver;
     const { weight } = payload, rest2 = __rest(payload, ["weight"]);
@@ -144,8 +144,8 @@ const getParcelHistory = (userId, query) => __awaiter(void 0, void 0, void 0, fu
     }).populate("current_status", null);
     const queryBuilder = new queryBuilder_1.QueryBuilder(parcelsQuery, query);
     const parcels = queryBuilder
-        .search(parcel_constant_1.parcelSearchableFields)
         .filter()
+        .search(parcel_constant_1.parcelSearchableFields)
         .sort()
         .paginate();
     const [data, meta] = yield Promise.all([
@@ -167,7 +167,7 @@ const cancelParcel = (tracking_number, userId) => __awaiter(void 0, void 0, void
         throw new AppErrors_1.default(http_status_codes_1.default.NOT_FOUND, "Parcel Not Found");
     }
     const currentStatus = parcel_model_1.ParcelStatus.hydrate(parcel.current_status);
-    if (![parcel_interface_1.Status.REQUESTED, parcel_interface_1.Status.APPROVED, parcel_interface_1.Status.RESHEDULED].includes(currentStatus.status)) {
+    if (![parcel_interface_1.Status.REQUESTED, parcel_interface_1.Status.APPROVED, parcel_interface_1.Status.RESCHEDULED].includes(currentStatus.status)) {
         throw new AppErrors_1.default(http_status_codes_1.default.BAD_REQUEST, `Your Parcel Is ${currentStatus.status} .You Can Not Cancel Now`);
     }
     currentStatus.status = parcel_interface_1.Status.CANCELLED;
@@ -177,8 +177,8 @@ const cancelParcel = (tracking_number, userId) => __awaiter(void 0, void 0, void
 });
 const updateParcelStatus = (tracking_number, payload) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const { status, paid_status, fees, delivary_date } = payload;
-    const parcel = yield parcel_model_1.Parcel.findOne({ tracking_number })
+    const { status, paid_status, fees, delivery_date } = payload;
+    const parcel = yield parcel_model_1.Parcel.findOne({ tracking_number: tracking_number })
         .populate("current_status", "status paid_status")
         .populate("sender", null);
     if (!parcel) {
@@ -195,16 +195,19 @@ const updateParcelStatus = (tracking_number, payload) => __awaiter(void 0, void 
         currentStatus.status = status;
     }
     if (paid_status) {
-        if (paid_status === currentStatus.paid_status) {
-            throw new AppErrors_1.default(http_status_codes_1.default.BAD_REQUEST, `Your Parcel Is Already ${paid_status}.`);
-        }
+        // if (paid_status === IPaidStatus.PAID) {
+        //   throw new AppError(
+        //     httpStatus.BAD_REQUEST,
+        //     `Your Parcel Is Already ${paid_status}.`
+        //   );
+        // }
         currentStatus.paid_status = paid_status;
     }
     if (fees) {
         parcel.fees = fees;
     }
-    if (delivary_date) {
-        parcel.delivery_date = delivary_date;
+    if (delivery_date) {
+        parcel.delivery_date = delivery_date;
     }
     parcel.current_status = currentStatus;
     parcel.trackingEvents = [...((_a = parcel.trackingEvents) !== null && _a !== void 0 ? _a : []), currentStatus];
@@ -331,7 +334,7 @@ const updateParcel = (payload, tracking_number, userId) => __awaiter(void 0, voi
     if (parcel.sender.toString() != userId) {
         throw new AppErrors_1.default(http_status_codes_1.default.UNAUTHORIZED, "You Can Not Update This Parcel");
     }
-    if (![parcel_interface_1.Status.REQUESTED, parcel_interface_1.Status.APPROVED, parcel_interface_1.Status.RESHEDULED].includes(parcel.current_status.status)) {
+    if (![parcel_interface_1.Status.REQUESTED, parcel_interface_1.Status.APPROVED, parcel_interface_1.Status.RESCHEDULED].includes(parcel.current_status.status)) {
         throw new AppErrors_1.default(http_status_codes_1.default.BAD_REQUEST, `Your Parcel Is ${parcel.current_status.status} .You Can Not Update Now`);
     }
     const updatedParcel = yield parcel_model_1.Parcel.findOneAndUpdate({ tracking_number }, Object.assign({}, payload), { new: true });

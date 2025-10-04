@@ -2,9 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parcelSearchableFields = void 0;
 exports.parcelSearchableFields = [
-    "name",
-    "email",
-    "phone",
+    "receiver.name",
+    "receiver.email",
+    "receiver.phone",
+    "receiver.address",
     "role",
-    "address",
+    "parcel_type",
+    "tracking_number",
 ];

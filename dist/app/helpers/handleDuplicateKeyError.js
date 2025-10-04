@@ -7,7 +7,7 @@ const handleDuplicateKeyError = (err) => {
     const errorSources = [];
     for (const key in err.keyPattern) {
         errorSources.push({
-            field: key,
+            path: key,
             value: err.keyValue[key],
             message: `${key} '${err.keyValue[key]}' Is Already Taken`,
         });

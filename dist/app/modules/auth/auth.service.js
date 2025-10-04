@@ -13,15 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthServices = void 0;
-const userTokens_1 = require("../../utils/userTokens");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const user_model_1 = require("../user/user.model");
-const AppErrors_1 = __importDefault(require("../../errorHelpers/AppErrors"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
-const env_1 = require("../../config/env");
-const user_interface_1 = require("../user/user.interface");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const env_1 = require("../../config/env");
+const AppErrors_1 = __importDefault(require("../../errorHelpers/AppErrors"));
 const sendEmail_1 = require("../../utils/sendEmail");
+const userTokens_1 = require("../../utils/userTokens");
+const user_interface_1 = require("../user/user.interface");
+const user_model_1 = require("../user/user.model");
 const getNewAccessToken = (refreshToken) => __awaiter(void 0, void 0, void 0, function* () {
     const newAccessToken = yield (0, userTokens_1.createNewAccessTokenWithRefreshToken)(refreshToken);
     return {
@@ -81,7 +81,7 @@ const forgotPassword = (email) => __awaiter(void 0, void 0, void 0, function* ()
     const resetToken = jsonwebtoken_1.default.sign(jwtPayload, env_1.envVars.JWT.JWT_ACCESS_SECRET, {
         expiresIn: "10m",
     });
-    const resetUILink = `${env_1.envVars.FRONTEND_URL}/reset-password?id=${isUserExist._id}&token=${resetToken}`;
+    const resetUILink = `${env_1.envVars.FRONTEND_URL}/public/reset-password?id=${isUserExist._id}&token=${resetToken}`;
     (0, sendEmail_1.sendEmail)({
         to: isUserExist.email,
         subject: "Password Reset",

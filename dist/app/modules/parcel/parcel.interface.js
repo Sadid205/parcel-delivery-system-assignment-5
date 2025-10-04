@@ -11,7 +11,7 @@ var Status;
     Status["CANCELLED"] = "CANCELLED";
     Status["BLOCKED"] = "BLOCKED";
     Status["RETURNED"] = "RETURNED";
-    Status["RESHEDULED"] = "RESHEDULED";
+    Status["RESCHEDULED"] = "RESCHEDULED";
 })(Status || (exports.Status = Status = {}));
 var IPaidStatus;
 (function (IPaidStatus) {
@@ -23,7 +23,7 @@ var IParcelType;
     IParcelType["DOCUMENT"] = "DOCUMENT";
     IParcelType["BOX"] = "BOX";
     IParcelType["FRAGILE"] = "FRAGILE";
-    IParcelType["LIQUIED"] = "LIQUID";
+    IParcelType["LIQUID"] = "LIQUID";
     IParcelType["FOOD"] = "FOOD";
     IParcelType["ELECTRONICS"] = "ELECTRONICS";
     IParcelType["OTHER"] = "OTHER";

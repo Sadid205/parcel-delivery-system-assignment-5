@@ -24,13 +24,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthControllers = void 0;
-const catchAsync_1 = require("../../utils/catchAsync");
+const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const passport_1 = __importDefault(require("passport"));
 const AppErrors_1 = __importDefault(require("../../errorHelpers/AppErrors"));
-const userTokens_1 = require("../../utils/userTokens");
-const setCookie_1 = require("../../utils/setCookie");
+const catchAsync_1 = require("../../utils/catchAsync");
 const sendResponse_1 = require("../../utils/sendResponse");
-const http_status_codes_1 = __importDefault(require("http-status-codes"));
+const setCookie_1 = require("../../utils/setCookie");
+const userTokens_1 = require("../../utils/userTokens");
 const auth_service_1 = require("./auth.service");
 const credentialsLogin = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     passport_1.default.authenticate("local", (err, user, info) => __awaiter(void 0, void 0, void 0, function* () {
@@ -84,6 +84,7 @@ const changePassword = (0, catchAsync_1.catchAsync)((req, res, next) => __awaite
 const setPassword = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const decodedToken = req.user;
     const { password } = req.body;
+    console.log({ decodedToken, body: req.body });
     yield auth_service_1.AuthServices.setPassword(decodedToken.userId, password);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,

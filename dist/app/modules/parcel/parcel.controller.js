@@ -61,6 +61,7 @@ const cancelParcel = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(
 const updateParcelStatus = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const tracking_number = req.params.tracking_number;
     const result = yield parcel_service_1.ParcelService.updateParcelStatus(tracking_number, req.body);
+    // console.log(req.body.delivery_date);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.default.OK,
@@ -71,6 +72,7 @@ const updateParcelStatus = (0, catchAsync_1.catchAsync)((req, res, next) => __aw
 const assignParcel = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { tracking_number } = req.body;
     const { id } = req.params;
+    console.log(tracking_number);
     const result = yield parcel_service_1.ParcelService.assignParcel(tracking_number, id, req.user.userId);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
@@ -100,6 +102,7 @@ const getAssignedParcel = (0, catchAsync_1.catchAsync)((req, res, next) => __awa
 }));
 const sendOtp = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { tracking_number } = req.body;
+    console.log(tracking_number);
     const result = yield parcel_service_1.ParcelService.sendOtp(tracking_number);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,

@@ -32,7 +32,9 @@ class QueryBuilder {
                     [field]: { $regex: searchTerm, $options: "i" },
                 })),
             };
-            this.modelQuery = this.modelQuery.find(searchQuery);
+            this.modelQuery = this.modelQuery.find({
+                $and: [this.modelQuery.getQuery(), searchQuery],
+            });
         }
         return this;
     }
@@ -59,7 +61,7 @@ class QueryBuilder {
     }
     getMeta() {
         return __awaiter(this, void 0, void 0, function* () {
-            const totalDocuments = yield this.modelQuery.model.countDocuments();
+            const totalDocuments = yield this.modelQuery.model.countDocuments(this.modelQuery.getQuery());
             const page = Number(this.query.page) || 1;
             const limit = Number(this.query.limit) || 10;
             const totalPage = Math.ceil(totalDocuments / limit);
