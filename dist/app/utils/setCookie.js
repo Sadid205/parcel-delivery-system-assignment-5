@@ -7,8 +7,8 @@ const setAuthCookie = (res, tokenInfo) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
-            path: "/",
-            domain: "parcel-delivery-management-frontend.vercel.app",
+            // path: "/",
+            // domain: "parcel-delivery-management-frontend.vercel.app",
         });
     }
     if (tokenInfo.refreshToken) {
@@ -16,8 +16,8 @@ const setAuthCookie = (res, tokenInfo) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
-            path: "/",
-            domain: "parcel-delivery-management-frontend.vercel.app",
+            // path: "/",
+            // domain: "parcel-delivery-management-frontend.vercel.app",
         });
     }
 };
