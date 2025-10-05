@@ -7,6 +7,8 @@ const setAuthCookie = (res, tokenInfo) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
+            path: "/",
+            domain: ".vercel.app",
         });
     }
     if (tokenInfo.refreshToken) {
@@ -14,6 +16,8 @@ const setAuthCookie = (res, tokenInfo) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
+            path: "/",
+            domain: ".vercel.app",
         });
     }
 };
