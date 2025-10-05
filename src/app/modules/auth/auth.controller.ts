@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 import passport from "passport";
+import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/AppErrors";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
@@ -124,15 +125,24 @@ const resetPassword = catchAsync(
 
 const logout = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+    const isProduction = envVars.NODE_ENV === "production";
     res.clearCookie("accessToken", {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      path: "/",
+      domain: isProduction
+        ? "https://parcel-delivery-system-beta.vercel.app"
+        : undefined,
     });
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      path: "/",
+      domain: isProduction
+        ? "https://parcel-delivery-system-beta.vercel.app"
+        : undefined,
     });
     sendResponse(res, {
       success: true,

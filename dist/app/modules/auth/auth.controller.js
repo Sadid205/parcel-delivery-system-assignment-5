@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthControllers = void 0;
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const passport_1 = __importDefault(require("passport"));
+const env_1 = require("../../config/env");
 const AppErrors_1 = __importDefault(require("../../errorHelpers/AppErrors"));
 const catchAsync_1 = require("../../utils/catchAsync");
 const sendResponse_1 = require("../../utils/sendResponse");
@@ -116,15 +117,24 @@ const resetPassword = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter
     });
 }));
 const logout = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const isProduction = env_1.envVars.NODE_ENV === "production";
     res.clearCookie("accessToken", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        path: "/",
+        domain: isProduction
+            ? "https://parcel-delivery-system-beta.vercel.app"
+            : undefined,
     });
     res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        path: "/",
+        domain: isProduction
+            ? "https://parcel-delivery-system-beta.vercel.app"
+            : undefined,
     });
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
