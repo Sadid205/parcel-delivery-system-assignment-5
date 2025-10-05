@@ -131,18 +131,18 @@ const logout = catchAsync(
       secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
       path: "/",
-      domain: isProduction
-        ? "parcel-delivery-management-frontend.vercel.app"
-        : undefined,
+      // domain: isProduction
+      //   ? "parcel-delivery-management-frontend.vercel.app"
+      //   : undefined,
     });
     res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
       path: "/",
-      domain: isProduction
-        ? "parcel-delivery-management-frontend.vercel.app"
-        : undefined,
+      // domain: isProduction
+      //   ? "parcel-delivery-management-frontend.vercel.app"
+      //   : undefined,
     });
     sendResponse(res, {
       success: true,
