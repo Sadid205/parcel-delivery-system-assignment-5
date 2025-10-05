@@ -132,7 +132,7 @@ const logout = catchAsync(
       sameSite: isProduction ? "none" : "lax",
       path: "/",
       domain: isProduction
-        ? "https://parcel-delivery-system-beta.vercel.app"
+        ? "parcel-delivery-management-frontend.vercel.app"
         : undefined,
     });
     res.clearCookie("refreshToken", {
@@ -141,7 +141,7 @@ const logout = catchAsync(
       sameSite: isProduction ? "none" : "lax",
       path: "/",
       domain: isProduction
-        ? "https://parcel-delivery-system-beta.vercel.app"
+        ? "parcel-delivery-management-frontend.vercel.app"
         : undefined,
     });
     sendResponse(res, {

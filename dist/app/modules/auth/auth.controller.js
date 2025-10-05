@@ -124,7 +124,7 @@ const logout = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0
         sameSite: isProduction ? "none" : "lax",
         path: "/",
         domain: isProduction
-            ? "https://parcel-delivery-system-beta.vercel.app"
+            ? "parcel-delivery-management-frontend.vercel.app"
             : undefined,
     });
     res.clearCookie("refreshToken", {
@@ -133,7 +133,7 @@ const logout = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0
         sameSite: isProduction ? "none" : "lax",
         path: "/",
         domain: isProduction
-            ? "https://parcel-delivery-system-beta.vercel.app"
+            ? "parcel-delivery-management-frontend.vercel.app"
             : undefined,
     });
     (0, sendResponse_1.sendResponse)(res, {
