@@ -30,7 +30,7 @@ It includes full **authentication flow** (register, login, logout, password rese
 
 ```bash
 git clone https://github.com/Sadid205/parcel-delivery-system-assignment-5.git
-cd parcel-delivery-system
+
 ```
 
 2️⃣ Install Dependencies
