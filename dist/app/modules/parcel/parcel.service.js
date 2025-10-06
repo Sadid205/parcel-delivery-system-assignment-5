@@ -138,9 +138,8 @@ const getAllParcel = (query) => __awaiter(void 0, void 0, void 0, function* () {
     };
 });
 const getParcelHistory = (userId, query) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_model_1.User.findById(userId);
     const parcelsQuery = parcel_model_1.Parcel.find({
-        $or: [{ sender: userId }, { "sender.email": user === null || user === void 0 ? void 0 : user.email }],
+        $or: [{ sender: userId }],
     }).populate("current_status", null);
     const queryBuilder = new queryBuilder_1.QueryBuilder(parcelsQuery, query);
     const parcels = queryBuilder
@@ -160,7 +159,7 @@ const getParcelHistory = (userId, query) => __awaiter(void 0, void 0, void 0, fu
 const getIncomingParcel = (userId, query) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.findById(userId);
     const parcelsQuery = parcel_model_1.Parcel.find({
-        $or: [{ sender: userId }, { "receiver.email": user === null || user === void 0 ? void 0 : user.email }],
+        $or: [{ "receiver.email": user === null || user === void 0 ? void 0 : user.email }, { "receiver.phone": user === null || user === void 0 ? void 0 : user.phone }],
     }).populate("current_status", null);
     const queryBuilder = new queryBuilder_1.QueryBuilder(parcelsQuery, query);
     const parcels = queryBuilder

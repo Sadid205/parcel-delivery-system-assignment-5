@@ -141,10 +141,8 @@ const getParcelHistory = async (
   userId: string,
   query: Record<string, string>
 ) => {
-  const user = await User.findById(userId);
-
   const parcelsQuery = Parcel.find({
-    $or: [{ sender: userId }, { "sender.email": user?.email }],
+    $or: [{ sender: userId }],
   }).populate("current_status", null);
 
   const queryBuilder = new QueryBuilder(parcelsQuery, query);
@@ -170,7 +168,7 @@ const getIncomingParcel = async (
   const user = await User.findById(userId);
 
   const parcelsQuery = Parcel.find({
-    $or: [{ sender: userId }, { "receiver.email": user?.email }],
+    $or: [{ "receiver.email": user?.email }, { "receiver.phone": user?.phone }],
   }).populate("current_status", null);
 
   const queryBuilder = new QueryBuilder(parcelsQuery, query);
