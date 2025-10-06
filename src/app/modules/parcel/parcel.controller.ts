@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../../utils/catchAsync";
-import { ParcelService } from "./parcel.service";
-import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
+import { ParcelService } from "./parcel.service";
 
 const createParcel = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -48,6 +48,22 @@ const getParcelHistory = catchAsync(
       success: true,
       statusCode: httpStatus.OK,
       message: "Your Parcel History Retrieved Successfully",
+      data: result.data,
+      meta: result.meta,
+    });
+  }
+);
+const getIncomingParcel = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const query = req.query;
+    const result = await ParcelService.getIncomingParcel(
+      (req.user as JwtPayload).userId,
+      query as Record<string, string>
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Your Incoming Parcel Retrieved Successfully",
       data: result.data,
       meta: result.meta,
     });
@@ -192,4 +208,5 @@ export const ParcelController = {
   getAssignedParcel,
   updateParcel,
   getSingleParcel,
+  getIncomingParcel,
 };

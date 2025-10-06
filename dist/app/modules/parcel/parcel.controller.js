@@ -13,10 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ParcelController = void 0;
-const catchAsync_1 = require("../../utils/catchAsync");
-const parcel_service_1 = require("./parcel.service");
-const sendResponse_1 = require("../../utils/sendResponse");
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
+const catchAsync_1 = require("../../utils/catchAsync");
+const sendResponse_1 = require("../../utils/sendResponse");
+const parcel_service_1 = require("./parcel.service");
 const createParcel = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const newParcel = yield parcel_service_1.ParcelService.createParcel(req.body, req.user.userId);
     (0, sendResponse_1.sendResponse)(res, {
@@ -44,6 +44,17 @@ const getParcelHistory = (0, catchAsync_1.catchAsync)((req, res, next) => __awai
         success: true,
         statusCode: http_status_codes_1.default.OK,
         message: "Your Parcel History Retrieved Successfully",
+        data: result.data,
+        meta: result.meta,
+    });
+}));
+const getIncomingParcel = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const query = req.query;
+    const result = yield parcel_service_1.ParcelService.getIncomingParcel(req.user.userId, query);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.OK,
+        message: "Your Incoming Parcel Retrieved Successfully",
         data: result.data,
         meta: result.meta,
     });
@@ -143,4 +154,5 @@ exports.ParcelController = {
     getAssignedParcel,
     updateParcel,
     getSingleParcel,
+    getIncomingParcel,
 };

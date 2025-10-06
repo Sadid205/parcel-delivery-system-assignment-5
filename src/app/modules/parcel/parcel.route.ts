@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { checkAuth } from "../../middlewares/checkAuth";
+import { validatedRequest } from "../../middlewares/validatedRequest";
 import { Role } from "../user/user.interface";
 import { ParcelController } from "./parcel.controller";
-import { validatedRequest } from "../../middlewares/validatedRequest";
 import {
   assignParcelSchema,
   createParcelZodSchema,
@@ -29,6 +29,11 @@ router.get(
   "/history",
   checkAuth(...Object.values(Role)),
   ParcelController.getParcelHistory
+);
+router.get(
+  "/incoming-parcel",
+  checkAuth(...Object.values(Role)),
+  ParcelController.getIncomingParcel
 );
 
 router.get(

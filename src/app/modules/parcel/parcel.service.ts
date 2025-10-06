@@ -144,6 +144,32 @@ const getParcelHistory = async (
   const user = await User.findById(userId);
 
   const parcelsQuery = Parcel.find({
+    $or: [{ sender: userId }, { "sender.email": user?.email }],
+  }).populate("current_status", null);
+
+  const queryBuilder = new QueryBuilder(parcelsQuery, query);
+  const parcels = queryBuilder
+    .filter()
+    .search(parcelSearchableFields)
+    .sort()
+    .paginate();
+  const [data, meta] = await Promise.all([
+    parcels.build(),
+    queryBuilder.getMeta(),
+  ]);
+
+  return {
+    data,
+    meta,
+  };
+};
+const getIncomingParcel = async (
+  userId: string,
+  query: Record<string, string>
+) => {
+  const user = await User.findById(userId);
+
+  const parcelsQuery = Parcel.find({
     $or: [{ sender: userId }, { "receiver.email": user?.email }],
   }).populate("current_status", null);
 
@@ -574,4 +600,5 @@ export const ParcelService = {
   getAssignedParcel,
   updateParcel,
   getSingleParcel,
+  getIncomingParcel,
 };

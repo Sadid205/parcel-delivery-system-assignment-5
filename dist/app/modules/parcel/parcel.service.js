@@ -140,6 +140,26 @@ const getAllParcel = (query) => __awaiter(void 0, void 0, void 0, function* () {
 const getParcelHistory = (userId, query) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.findById(userId);
     const parcelsQuery = parcel_model_1.Parcel.find({
+        $or: [{ sender: userId }, { "sender.email": user === null || user === void 0 ? void 0 : user.email }],
+    }).populate("current_status", null);
+    const queryBuilder = new queryBuilder_1.QueryBuilder(parcelsQuery, query);
+    const parcels = queryBuilder
+        .filter()
+        .search(parcel_constant_1.parcelSearchableFields)
+        .sort()
+        .paginate();
+    const [data, meta] = yield Promise.all([
+        parcels.build(),
+        queryBuilder.getMeta(),
+    ]);
+    return {
+        data,
+        meta,
+    };
+});
+const getIncomingParcel = (userId, query) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findById(userId);
+    const parcelsQuery = parcel_model_1.Parcel.find({
         $or: [{ sender: userId }, { "receiver.email": user === null || user === void 0 ? void 0 : user.email }],
     }).populate("current_status", null);
     const queryBuilder = new queryBuilder_1.QueryBuilder(parcelsQuery, query);
@@ -473,4 +493,5 @@ exports.ParcelService = {
     getAssignedParcel,
     updateParcel,
     getSingleParcel,
+    getIncomingParcel,
 };
