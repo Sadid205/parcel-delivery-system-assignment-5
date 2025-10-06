@@ -531,7 +531,10 @@ const verifyOtp = async (
   if (!parcel) {
     throw new AppError(httpStatus.NOT_FOUND, "Parcel Not Found");
   }
-  const currentStatus = ParcelStatus.hydrate(parcel.current_status);
+  const currentStatus = await ParcelStatus.findById(parcel.current_status);
+  if (!currentStatus) {
+    throw new AppError(httpStatus.NOT_FOUND, "Current status not found");
+  }
   if (currentStatus.status === Status.DELIVERED) {
     throw new AppError(httpStatus.NOT_FOUND, "Parcel Is Already Delivered");
   }

@@ -428,7 +428,10 @@ const verifyOtp = (otp, tracking_number, userId) => __awaiter(void 0, void 0, vo
     if (!parcel) {
         throw new AppErrors_1.default(http_status_codes_1.default.NOT_FOUND, "Parcel Not Found");
     }
-    const currentStatus = parcel_model_1.ParcelStatus.hydrate(parcel.current_status);
+    const currentStatus = yield parcel_model_1.ParcelStatus.findById(parcel.current_status);
+    if (!currentStatus) {
+        throw new AppErrors_1.default(http_status_codes_1.default.NOT_FOUND, "Current status not found");
+    }
     if (currentStatus.status === parcel_interface_1.Status.DELIVERED) {
         throw new AppErrors_1.default(http_status_codes_1.default.NOT_FOUND, "Parcel Is Already Delivered");
     }
